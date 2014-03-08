@@ -1,0 +1,3 @@
+#!/bin/bash
+echo '<<<redis_replication>>>'
+redis-cli info|grep -A9 role

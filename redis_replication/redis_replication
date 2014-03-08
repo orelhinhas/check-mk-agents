@@ -1,0 +1,41 @@
+#!/usr/bin/python
+# Author: Joao Gabriel <jglisanti@gmail.com>
+# Check Redis replication, which role, master_link_status and master_last_io_seconds_ago and number of slaves
+
+def redis_replication_type(info):
+  for tipo in info[0]:
+    tipo = tipo.split(':')[1]
+  return tipo
+
+def inventory_redis_replication_type(info):
+  inventory = []
+  role = redis_replication_type(info)
+  inventory.append((role, None))
+  return inventory
+
+def check_redis_replication_type(item, params, info):
+  role = redis_replication_type(info)
+  if role == 'master':
+    for slaves in info[1]:
+      slaves = slaves.split(':')[1]
+      if slaves < '1':
+        return (2, 'Slave not connected')
+      else:
+        return (0, 'OK - %s slaves connected' % slaves)
+  elif role == 'slave':
+    for master_link in info[3]:
+      master_link = master_link.split(':')[1]
+      for master_last in info[4]:
+        master_last = master_last.split(':')[1]
+      if master_link == 'up' and master_last >= 0 or master_last < 10:
+        return (0, 'OK - master_link_status is %s and no delayed' % master_link)
+      else:
+        return (2, 'master_link_status is %s or %s delayed' % (master_link, master_last))
+  else:
+    return (2, 'Redis is down')
+
+check_info ["redis_replication.type"] = {
+    'check_function':       check_redis_replication_type,
+    'inventory_function':   inventory_redis_replication_type,
+    'service_description':  'Redis replication %s',
+    }
