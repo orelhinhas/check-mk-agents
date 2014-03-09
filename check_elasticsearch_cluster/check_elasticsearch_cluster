@@ -1,0 +1,27 @@
+#!/usr/bin/python
+
+def inventory_elasticsearch_cluster(info):
+  inventory = []
+  for line in info:
+    elasticsearch_cluster_name = info[1][2].strip(',').strip('"')
+    if elasticsearch_cluster_name:
+      inventory.append((elasticsearch_cluster_name, None))
+  return inventory
+
+def check_elasticsearch_cluster_status(item, params, info):
+    if info[1][2].strip(',').strip('"') == item and info[2][2].strip(',').strip('"') == 'green':
+      return (0, "OK - Elasticsearch Cluster is green")
+    elif info[1][2].strip(',').strip('"') == item and info[2][2].strip(',').strip('"') == 'yellow':
+      return (1, "Warning - Elasticsearch Cluster is yellow - Verify shards")
+    elif info[1][2].strip(',').strip('"') == item and info[2][2].strip(',').strip('"') == 'red':
+      return (2, "ERROR - Elasticsearch Cluster is DOWN")
+    else:
+      return (3, "UNKNOWN - Please Verify")
+
+
+check_info["check_elasticsearch_cluster.status"] = {
+    'check_function':         check_elasticsearch_cluster_status,
+    'inventory_function':     inventory_elasticsearch_cluster,
+    'service_description':    'Elasticsearch Cluster %s',
+    }
+
