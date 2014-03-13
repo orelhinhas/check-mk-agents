@@ -1,4 +1,6 @@
 #!/usr/bin/python
+# Joao Gabriel <jglisanti@gmail.com>
+# Verify elasticsearch cluster 
 
 def inventory_elasticsearch_cluster(info):
   inventory = []
