@@ -1,0 +1,6 @@
+#!/bin/bash
+echo '<<<passenger>>>'
+for app in `passenger-status |grep "App root:"|awk '{ print $3 }'|cut -d/ -f3|sed 's/$/: /g'` 
+do 
+	passenger-status|grep "Requests in queue"|sed "s/^  //g"|sed "s@^@$app @"|head -n1
+done

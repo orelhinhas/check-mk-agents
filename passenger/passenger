@@ -1,0 +1,26 @@
+#!/usr/bin/python
+# Joao Gabriel <jglisanti@gmail.com>
+
+def inventory_passenger(info):
+  inventory = []
+  for line in info:
+    app = line[0]
+    queue = line[4]
+    if app:
+      inventory.append((app, None))
+  return inventory
+
+def check_passenger_queue_status(item, params, info):
+  for line in info:
+    if line[0] == item and line[4] > '6':
+      return (2, "ERROR - There are %s in queue" % line[4])
+    elif line[0] == item and line[4] < '6'  and line[4] >= '1':
+      return (1, "WARNING - There are %s in queue" % line[4])
+    elif line[0] == item and line[4] == '0':
+      return (0, "OK - Nothing in queue")
+
+check_info["passenger.queue_status"] = {
+    'check_function':     check_passenger_queue_status,
+    'inventory_function': inventory_passenger,
+    'service_description':  'Passenger Queue %s',
+    }
