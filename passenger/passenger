@@ -1,5 +1,6 @@
 #!/usr/bin/python
 # Joao Gabriel <jglisanti@gmail.com>
+# version 0.1 - catch only the status queue, yet :)
 
 def inventory_passenger(info):
   inventory = []
